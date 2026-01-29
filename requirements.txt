@@ -1,10 +1,9 @@
-flask
-flask-cors
 torch
 torchvision
 transformers
-sentence-transformers
-open-clip-torch
 pillow
 numpy
+scikit-learn
+flask
+flask-cors
 gdown
