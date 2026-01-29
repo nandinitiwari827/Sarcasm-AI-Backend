@@ -13,3 +13,4 @@ Pillow~=11.3.0
 config~=0.5.1
 matplotlib~=3.10.6
 seaborn~=0.13.2
+gdown
