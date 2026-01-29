@@ -1,21 +1,14 @@
-FROM python:3.10-slim
+FROM python:3.10
 
 WORKDIR /app
 
-# system dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    wget \
-    && rm -rf /var/lib/apt/lists/*
-
-# copy requirements
 COPY requirements.txt .
-
-# install python packages
 RUN pip install --no-cache-dir -r requirements.txt
 
-# copy project files
 COPY . .
+
+# 🔥 UNZIP SRC
+RUN unzip src.zip && rm src.zip
 
 EXPOSE 7860
 
