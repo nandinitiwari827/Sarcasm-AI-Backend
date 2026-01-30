@@ -5,6 +5,8 @@ from PIL import Image
 import torchvision.transforms as transforms
 import os
 import gdown
+import requests
+from io import BytesIO
 
 from src.model_hmt import HierarchicalMultimodalTransformerCLIP
 
@@ -18,11 +20,9 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 print("🖥 Device:", device)
 
 # -------------------------------------------------
-# MODEL DOWNLOAD (Render safe)
+# MODEL DOWNLOAD
 # -------------------------------------------------
 MODEL_PATH = "best_model.pt"
-
-# 🔽 Replace FILE_ID below
 MODEL_DRIVE_URL = "https://drive.google.com/uc?id=1Q_Oh_hxjwMGK8e5HZzJtM7UFu-S2P8kk"
 
 if not os.path.exists(MODEL_PATH):
@@ -64,12 +64,25 @@ def home():
 def predict():
     try:
         image = request.files.get("image")
+        image_url = request.form.get("image_url", "")
         text = request.form.get("text", "")
 
-        if image is None:
-            return jsonify({"error": "No image uploaded"}), 400
+        # ------------------------------
+        # IMAGE FROM DEVICE
+        # ------------------------------
+        if image:
+            img = Image.open(image).convert("RGB")
 
-        img = Image.open(image).convert("RGB")
+        # ------------------------------
+        # IMAGE FROM URL (IMPORTANT FIX)
+        # ------------------------------
+        elif image_url:
+            response = requests.get(image_url, timeout=10)
+            img = Image.open(BytesIO(response.content)).convert("RGB")
+
+        else:
+            return jsonify({"error": "No image provided"}), 400
+
         img = transform(img).unsqueeze(0).to(device)
 
         with torch.no_grad():
@@ -101,7 +114,7 @@ def predict():
 
 
 # -------------------------------------------------
-# START SERVER (RENDER COMPATIBLE)
+# START SERVER (HF / Render)
 # -------------------------------------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=7860)
