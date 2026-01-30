@@ -6,4 +6,5 @@ numpy
 scikit-learn
 flask
 flask-cors
+open-clip-torch
 gdown
