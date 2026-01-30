@@ -7,4 +7,5 @@ scikit-learn
 flask
 flask-cors
 open-clip-torch
+sentence-transformers
 gdown
